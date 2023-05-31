@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.18;
 
+interface TokenRecipient {
+    function receiveApproval(
+        address _from,
+        uint256 _value,
+        address _token,
+        bytes calldata _extraData
+    ) external;
+}
+
 contract ERC20 {
     string public name;
     string public symbol;
@@ -59,5 +68,17 @@ contract ERC20 {
         allowance[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
+    }
+
+    function approveAndCall(
+        address _spender,
+        uint256 _value,
+        bytes calldata _extraData
+    ) public returns (bool) {
+        TokenRecipient spender = TokenRecipient(_spender);
+        if (approve(_spender, _value)) {
+            spender.receiveApproval(msg.sender, _value, address(this), _extraData);
+            return true;
+        } else return false;
     }
 }
