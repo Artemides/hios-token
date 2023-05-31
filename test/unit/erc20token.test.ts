@@ -1,16 +1,20 @@
-import { assert } from "chai";
+import { assert, expect } from "chai";
 import { ERC20 } from "../../typechain-types";
 
 import { deployments, ethers, getNamedAccounts } from "hardhat";
 describe("ERC20 Token", () => {
     let hiosToken: ERC20;
     let deployer: string;
+    let user1: string;
     const DECIMALS = 10 ** 18;
     const INITIAL_SUPPLY = 500;
     const TOTAL_SUPPLY = INITIAL_SUPPLY * DECIMALS;
+    const tokens = ethers.utils.parseEther("10");
 
     beforeEach(async () => {
-        deployer = (await getNamedAccounts()).deployer;
+        const accounts = await getNamedAccounts();
+        deployer = accounts.deployer;
+        user1 = accounts.user1;
         await deployments.fixture(["all"]);
         hiosToken = await ethers.getContract("ERC20", deployer);
     });
@@ -30,6 +34,17 @@ describe("ERC20 Token", () => {
             const symbol = await hiosToken.symbol();
             assert.equal(name, "Helios");
             assert.equal(symbol, "HIOS");
+        });
+    });
+
+    describe("Transfer", () => {
+        it("Should transfer tokens successfully to another address", async () => {
+            await hiosToken.transfer(user1, tokens);
+            expect(await hiosToken.balanceOf(user1)).to.be.equals(tokens);
+        });
+
+        it("emits the transfer event, when a transfers gets success", async () => {
+            expect(await hiosToken.transfer(user1, tokens)).to.emit(hiosToken, "Transfer");
         });
     });
 });

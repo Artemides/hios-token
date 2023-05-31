@@ -16,8 +16,8 @@ contract ERC20 {
     uint8 public constant DECIMALS = 18;
     uint256 public totalSupply;
 
-    mapping(address => uint256) balanceOf;
-    mapping(address => mapping(address => uint256)) allowance;
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _ammount);
     event Approval(address indexed _owner, address indexed _spender, uint256 _ammount);
