@@ -79,5 +79,11 @@ describe("ERC20 Token", () => {
             const allowance = await hiosToken.allowance(deployer, user1);
             assert.equal(allowance.toString(), tokensDelegated.toString());
         });
+
+        it("Won't allow transfer over the value delegated", async () => {
+            await hiosToken.approve(user1, tokensDelegated);
+            await expect(spenderToken.transferFrom(deployer, user1, tokensDelegated.add("4"))).to.be
+                .reverted;
+        });
     });
 });
