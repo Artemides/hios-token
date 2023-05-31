@@ -2,6 +2,7 @@ import { assert, expect } from "chai";
 import { ERC20 } from "../../typechain-types";
 
 import { deployments, ethers, getNamedAccounts } from "hardhat";
+import { BigNumber } from "ethers";
 describe("ERC20 Token", () => {
     let hiosToken: ERC20;
     let deployer: string;
@@ -49,15 +50,34 @@ describe("ERC20 Token", () => {
     });
     describe("Allowances", () => {
         let spenderToken: ERC20;
+        let tokensDelegated: BigNumber;
+
         beforeEach(async () => {
             spenderToken = await ethers.getContract("ERC20", user1);
+            tokensDelegated = ethers.utils.parseEther("5");
         });
+
         it("Should approve other address to spend or transfer tokens on his befalf", async () => {
-            const tokensDelegated = ethers.utils.parseEther("5");
             await hiosToken.approve(user1, tokensDelegated);
             await spenderToken.transferFrom(deployer, user1, tokensDelegated);
 
             expect(await spenderToken.balanceOf(user1)).to.be.equal(tokensDelegated);
+        });
+
+        it("doesn't allow an unnaproved account to do transfers", async () => {
+            await expect(spenderToken.transferFrom(deployer, user1, tokensDelegated)).to.be
+                .reverted;
+        });
+
+        it("emits an approval event, when an approval occurs", async () => {
+            expect(await hiosToken.approve(user1, tokensDelegated)).to.emit("ERC20", "Approval");
+        });
+
+        it("the allowance being set is accurate", async () => {
+            await hiosToken.approve(user1, tokensDelegated);
+
+            const allowance = await hiosToken.allowance(deployer, user1);
+            assert.equal(allowance.toString(), tokensDelegated.toString());
         });
     });
 });
