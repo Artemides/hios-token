@@ -81,4 +81,19 @@ contract ERC20 {
             return true;
         } else return false;
     }
+
+    //create function to burn tokens
+    //verify the amount to be burned
+    //update sender balance
+    //update total supply
+    //emit burn event
+
+    function burn(uint256 _value) public returns (bool) {
+        require(_value <= balanceOf[msg.sender]);
+
+        balanceOf[msg.sender] -= _value;
+        totalSupply -= _value;
+        emit Burn(msg.sender, _value);
+        return true;
+    }
 }
