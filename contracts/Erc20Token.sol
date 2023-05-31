@@ -96,4 +96,15 @@ contract ERC20 {
         emit Burn(msg.sender, _value);
         return true;
     }
+
+    function burnFrom(address _from, uint256 _value) public returns (bool) {
+        require(_value <= balanceOf[_from]);
+        require(_value <= allowance[_from][msg.sender]);
+
+        balanceOf[_from] -= _value;
+        allowance[_from][msg.sender] -= _value;
+        totalSupply -= _value;
+        emit Burn(_from, _value);
+        return true;
+    }
 }
