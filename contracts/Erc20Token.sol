@@ -11,7 +11,7 @@ contract ERC20 {
     mapping(address => mapping(address => uint256)) allowance;
 
     event Transfer(address indexed _from, address indexed _to, uint256 _ammount);
-    event Aproval(address indexed _owner, address indexed _spender, uint256 _ammount);
+    event Approval(address indexed _owner, address indexed _spender, uint256 _ammount);
     event Burn(address indexed from, uint256 _ammount);
 
     constructor(string memory _name, string memory _symbol, uint256 initialSupply) {
@@ -41,6 +41,12 @@ contract ERC20 {
 
     function transfer(address _to, uint256 _ammount) public returns (bool succcess) {
         _transfer(msg.sender, _to, _ammount);
+        return true;
+    }
+
+    function approve(address _spender, uint256 _value) public returns (bool success) {
+        allowance[msg.sender][_spender] = _value;
+        emit Approval(msg.sender, _spender, _value);
         return true;
     }
 }
