@@ -47,4 +47,17 @@ describe("ERC20 Token", () => {
             expect(await hiosToken.transfer(user1, tokens)).to.emit(hiosToken, "Transfer");
         });
     });
+    describe("Allowances", () => {
+        let spenderToken: ERC20;
+        beforeEach(async () => {
+            spenderToken = await ethers.getContract("ERC20", user1);
+        });
+        it("Should approve other address to spend or transfer tokens on his befalf", async () => {
+            const tokensDelegated = ethers.utils.parseEther("5");
+            await hiosToken.approve(user1, tokensDelegated);
+            await spenderToken.transferFrom(deployer, user1, tokensDelegated);
+
+            expect(await spenderToken.balanceOf(user1)).to.be.equal(tokensDelegated);
+        });
+    });
 });
