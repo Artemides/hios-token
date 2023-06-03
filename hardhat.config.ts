@@ -8,8 +8,8 @@ import "solidity-coverage";
 import "hardhat-gas-reporter";
 
 const localhostUrl = process.env.LOCALHOST_RPC_URL;
-const etherscanApiKey = process.env.ETHERSCAN_API_KEY;
-const coinmarketcap = process.env.COINMARKETCAP_API_KEY;
+const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "";
+const coinmarketcap = process.env.COINMARKETCAP_API_KEY || "";
 
 const config: HardhatUserConfig = {
     defaultNetwork: "hardhat",

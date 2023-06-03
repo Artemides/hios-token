@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/Erc20Token.sol": {
+      "content": "// SPDX-License-Identifier: SEE LICENSE IN LICENSE\npragma solidity ^0.8.18;\n\ninterface TokenRecipient {\n    function receiveApproval(\n        address _from,\n        uint256 _value,\n        address _token,\n        bytes calldata _extraData\n    ) external;\n}\n\ncontract HiosToken {\n    string public name;\n    string public symbol;\n    uint8 public constant DECIMALS = 18;\n    uint256 public totalSupply;\n\n    mapping(address => uint256) public balanceOf;\n    mapping(address => mapping(address => uint256)) public allowance;\n\n    event Transfer(address indexed _from, address indexed _to, uint256 _ammount);\n    event Approval(address indexed _owner, address indexed _spender, uint256 _ammount);\n    event Burn(address indexed from, uint256 _ammount);\n\n    constructor(string memory _name, string memory _symbol, uint256 initialSupply) {\n        name = _name;\n        symbol = _symbol;\n        totalSupply = initialSupply * 10 ** uint256(DECIMALS);\n        balanceOf[msg.sender] = totalSupply;\n    }\n\n    function _transfer(address _from, address _to, uint256 _ammount) internal {\n        require(_to != address(0));\n\n        uint256 senderBalance = balanceOf[_from];\n        uint256 receiverBalance = balanceOf[_to];\n\n        require(_ammount <= senderBalance);\n        require(senderBalance + _ammount >= senderBalance);\n\n        uint256 previousBalances = senderBalance + receiverBalance;\n\n        balanceOf[_from] -= _ammount;\n        balanceOf[_to] += _ammount;\n\n        emit Transfer(_from, _to, _ammount);\n        assert(balanceOf[_from] + balanceOf[_to] == previousBalances);\n    }\n\n    function transfer(address _to, uint256 _ammount) public returns (bool succcess) {\n        _transfer(msg.sender, _to, _ammount);\n        return true;\n    }\n\n    function transferFrom(\n        address _from,\n        address _to,\n        uint256 _value\n    ) public returns (bool success) {\n        require(_value <= allowance[_from][msg.sender]);\n        allowance[_from][msg.sender] -= _value;\n        _transfer(_from, _to, _value);\n        return true;\n    }\n\n    function approve(address _spender, uint256 _value) public returns (bool success) {\n        allowance[msg.sender][_spender] = _value;\n        emit Approval(msg.sender, _spender, _value);\n        return true;\n    }\n\n    function approveAndCall(\n        address _spender,\n        uint256 _value,\n        bytes calldata _extraData\n    ) public returns (bool) {\n        TokenRecipient spender = TokenRecipient(_spender);\n        if (approve(_spender, _value)) {\n            spender.receiveApproval(msg.sender, _value, address(this), _extraData);\n            return true;\n        } else return false;\n    }\n\n    //create function to burn tokens\n    //verify the amount to be burned\n    //update sender balance\n    //update total supply\n    //emit burn event\n\n    function burn(uint256 _value) public returns (bool) {\n        require(_value <= balanceOf[msg.sender]);\n\n        balanceOf[msg.sender] -= _value;\n        totalSupply -= _value;\n        emit Burn(msg.sender, _value);\n        return true;\n    }\n\n    function burnFrom(address _from, uint256 _value) public returns (bool) {\n        require(_value <= balanceOf[_from]);\n        require(_value <= allowance[_from][msg.sender]);\n\n        balanceOf[_from] -= _value;\n        allowance[_from][msg.sender] -= _value;\n        totalSupply -= _value;\n        emit Burn(_from, _value);\n        return true;\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

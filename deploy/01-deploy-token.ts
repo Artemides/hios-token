@@ -11,7 +11,7 @@ const hiosToken = async (hre: HardhatRuntimeEnvironment) => {
     const tokenName = "Helios";
     const tokenSymbol = "HIOS";
     const initialSupply = 500;
-    const hiosToken = await deploy("ERC20", {
+    const hiosToken = await deploy("HiosToken", {
         from: deployer,
         log: true,
         args: [tokenName, tokenSymbol, initialSupply],

@@ -10,7 +10,7 @@ interface TokenRecipient {
     ) external;
 }
 
-contract ERC20 {
+contract HiosToken {
     string public name;
     string public symbol;
     uint8 public constant DECIMALS = 18;
