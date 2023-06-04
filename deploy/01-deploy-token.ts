@@ -16,6 +16,7 @@ const hiosToken = async (hre: HardhatRuntimeEnvironment) => {
         log: true,
         args: [tokenName, tokenSymbol, initialSupply],
     });
+    log("Contract deployed");
 };
 
 export default hiosToken;
