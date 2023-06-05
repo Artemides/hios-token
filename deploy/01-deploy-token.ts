@@ -7,7 +7,6 @@ const hiosToken = async (hre: HardhatRuntimeEnvironment) => {
     } = hre;
     const { deployer } = await getNamedAccounts();
 
-    log("Deploying token...");
     const tokenName = "Helios";
     const tokenSymbol = "HIOS";
     const initialSupply = 500;
@@ -16,7 +15,7 @@ const hiosToken = async (hre: HardhatRuntimeEnvironment) => {
         log: true,
         args: [tokenName, tokenSymbol, initialSupply],
     });
-    log("Contract deployed");
+
 };
 
 export default hiosToken;
